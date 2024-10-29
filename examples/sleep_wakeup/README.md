@@ -123,7 +123,8 @@ Add Module name and MAC Address in WOL program.
 ![image](https://github.com/user-attachments/assets/4e3f75ba-79f3-428e-8230-742ef88e72b0)
 
 8. You can see the Raspberry Pi Pico, W5100S-EVB-Pico, W5500-EVB-Pico, W55RP20-EVB-Pico, W5100S-EVB-Pico2 or W5500-EVB-Pico2 is wake up and running (User LED will blinking).
-![image](https://github.com/user-attachments/assets/2b541db2-aba4-4c45-a350-9bc7527a7254)
+![image](https://github.com/user-attachments/assets/26f0184d-385b-4748-8c12-e61cb7d72bf3)
+
 
 
 
