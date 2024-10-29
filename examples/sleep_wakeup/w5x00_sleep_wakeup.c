@@ -115,8 +115,10 @@ int main()
 
     sleep_goto_sleep_until_gpio(PIN_IRQ, false, true);
 
+    printf("Wake up!\n");
+    uart_default_tx_wait_blocking();
+
     while(1){
-        printf("Wake up!\n");
         gpio_xor_mask(1<<LED_PIN);
         sleep_ms(500);
     }
