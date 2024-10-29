@@ -10,19 +10,13 @@
  * ----------------------------------------------------------------------------------------------------
  */
 #include <stdio.h>
-#include <string.h>
 
 #include "port_common.h"
 
 #include "wizchip_conf.h"
 #include "w5x00_spi.h"
 
-#include "mqtt_interface.h"
-#include "MQTTClient.h"
-
-#include "timer.h"
-#include "time.h"
-
+#include "pico/sleep.h"
 /**
  * ----------------------------------------------------------------------------------------------------
  * Macros
@@ -31,24 +25,17 @@
 /* Clock */
 #define PLL_SYS_KHZ (133 * 1000)
 
-/* Buffer */
-#define ETHERNET_BUF_MAX_SIZE (1024 * 2)
-
 /* Socket */
-#define SOCKET_MQTT 0
+#define SOCKET_WOL 0
 
 /* Port */
-#define PORT_MQTT 1883
+#define PORT_WOL 9000
 
-/* Timeout */
-#define DEFAULT_TIMEOUT 1000 // 1 second
-
-/* MQTT */
-#define MQTT_CLIENT_ID "rpi-pico"
-#define MQTT_USERNAME "wiznet"
-#define MQTT_PASSWORD "0123456789"
-#define MQTT_SUBSCRIBE_TOPIC "subscribe_topic"
-#define MQTT_KEEP_ALIVE 60 // 60 milliseconds
+#if DEVICE_BOARD_NAME == W55RP20_EVB_PICO
+#define LED_PIN     19
+#else
+#define LED_PIN     25
+#endif
 
 /**
  * ----------------------------------------------------------------------------------------------------
@@ -66,20 +53,6 @@ static wiz_NetInfo g_net_info =
         .dhcp = NETINFO_STATIC                       // DHCP enable/disable
 };
 
-/* MQTT */
-static uint8_t g_mqtt_send_buf[ETHERNET_BUF_MAX_SIZE] = {
-    0,
-};
-static uint8_t g_mqtt_recv_buf[ETHERNET_BUF_MAX_SIZE] = {
-    0,
-};
-static uint8_t g_mqtt_broker_ip[4] = {192, 168, 11, 3};
-static Network g_mqtt_network;
-static MQTTClient g_mqtt_client;
-static MQTTPacket_connectData g_mqtt_packet_connect_data = MQTTPacket_connectData_initializer;
-
-/* Timer  */
-static void repeating_timer_callback(void);
 
 /**
  * ----------------------------------------------------------------------------------------------------
@@ -89,8 +62,8 @@ static void repeating_timer_callback(void);
 /* Clock */
 static void set_clock_khz(void);
 
-/* MQTT */
-static void message_arrived(MessageData *msg_data);
+void gpio_callback(uint gpio, uint32_t events);
+void sleep_goto_sleep_until_gpio(uint gpio_pin, bool edge, bool high);
 
 /**
  * ----------------------------------------------------------------------------------------------------
@@ -100,11 +73,16 @@ static void message_arrived(MessageData *msg_data);
 int main()
 {
     /* Initialize */
-    int32_t retval = 0;
+    int retval = 0;
+    uint16_t len = 0;
 
     set_clock_khz();
 
     stdio_init_all();
+
+    gpio_init(LED_PIN);
+    gpio_set_dir(LED_PIN, GPIO_OUT);
+    gpio_put(LED_PIN, 0);
 
     wizchip_spi_initialize();
     wizchip_cris_initialize();
@@ -113,72 +91,34 @@ int main()
     wizchip_initialize();
     wizchip_check();
 
-    wizchip_1ms_timer_initialize(repeating_timer_callback);
-
     network_initialize(g_net_info);
 
     /* Get network information */
     print_network_information(g_net_info);
 
-    NewNetwork(&g_mqtt_network, SOCKET_MQTT);
+    while(getSn_SR(0) != SOCK_CLOSED);
 
-    retval = ConnectNetwork(&g_mqtt_network, g_mqtt_broker_ip, PORT_MQTT);
+    socket(0, Sn_MR_UDP, PORT_WOL, 0);
 
-    if (retval != 1)
-    {
-        printf(" Network connect failed\n");
+#if _WIZCHIP_ == W5100S
+    setIMR2(0x01);      // Open WOL magic pack interrupt
+    setMR2(0x08); // Receive WOL packets
+#elif _WIZCHIP_ == W5500
+    setIMR(0x10);     // Open WOL magic pack interrupt
+    setMR(0x20); // Receive WOL packets
+#endif
 
-        while (1)
-            ;
-    }
+    sleep_run_from_xosc();
 
-    /* Initialize MQTT client */
-    MQTTClientInit(&g_mqtt_client, &g_mqtt_network, DEFAULT_TIMEOUT, g_mqtt_send_buf, ETHERNET_BUF_MAX_SIZE, g_mqtt_recv_buf, ETHERNET_BUF_MAX_SIZE);
+    printf("Going to sleep until receive WOL Magic packet...\n");
+    uart_default_tx_wait_blocking();
 
-    /* Connect to the MQTT broker */
-    g_mqtt_packet_connect_data.MQTTVersion = 3;
-    g_mqtt_packet_connect_data.cleansession = 1;
-    g_mqtt_packet_connect_data.willFlag = 0;
-    g_mqtt_packet_connect_data.keepAliveInterval = MQTT_KEEP_ALIVE;
-    g_mqtt_packet_connect_data.clientID.cstring = MQTT_CLIENT_ID;
-    g_mqtt_packet_connect_data.username.cstring = MQTT_USERNAME;
-    g_mqtt_packet_connect_data.password.cstring = MQTT_PASSWORD;
+    sleep_goto_sleep_until_gpio(PIN_IRQ, false, true);
 
-    retval = MQTTConnect(&g_mqtt_client, &g_mqtt_packet_connect_data);
-
-    if (retval < 0)
-    {
-        printf(" MQTT connect failed : %d\n", retval);
-
-        while (1)
-            ;
-    }
-
-    printf(" MQTT connected\n");
-
-    /* Subscribe */
-    retval = MQTTSubscribe(&g_mqtt_client, MQTT_SUBSCRIBE_TOPIC, QOS0, message_arrived);
-
-    if (retval < 0)
-    {
-        printf(" Subscribe failed : %d\n", retval);
-
-        while (1)
-            ;
-    }
-
-    printf(" Subscribed\n");
-
-    /* Infinite loop */
-    while (1)
-    {
-        if ((retval = MQTTYield(&g_mqtt_client, g_mqtt_packet_connect_data.keepAliveInterval)) < 0)
-        {
-            printf(" Yield error : %d\n", retval);
-
-            while (1)
-                ;
-        }
+    while(1){
+        printf("Wake up!\n");
+        gpio_xor_mask(1<<LED_PIN);
+        sleep_ms(500);
     }
 }
 
@@ -203,16 +143,23 @@ static void set_clock_khz(void)
     );
 }
 
-/* MQTT */
-static void message_arrived(MessageData *msg_data)
-{
-    MQTTMessage *message = msg_data->message;
-
-    printf("%.*s", (uint32_t)message->payloadlen, (uint8_t *)message->payload);
+void gpio_callback(uint gpio, uint32_t events) {
+    return;
 }
 
-/* Timer */
-static void repeating_timer_callback(void)
-{
-    MilliTimer_Handler();
+void sleep_goto_sleep_until_gpio(uint gpio_pin, bool edge, bool high) {
+    gpio_init(gpio_pin);
+    gpio_set_dir(gpio_pin, GPIO_IN);  
+
+    gpio_set_irq_enabled_with_callback(
+        gpio_pin,
+        edge ? GPIO_IRQ_EDGE_RISE : GPIO_IRQ_EDGE_FALL,
+        true,
+        &gpio_callback
+    );
+
+    uint32_t save = scb_hw->scr;
+    scb_hw->scr = save | M0PLUS_SCR_SLEEPDEEP_BITS;
+
+    __wfi();  
 }

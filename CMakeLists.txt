@@ -52,7 +52,13 @@ if(NOT DEFINED PICO_SDK_PATH)
     message(STATUS "PICO_SDK_PATH = ${PICO_SDK_PATH}")
 endif()
 
+if(NOT DEFINED PICO_EXTRAS_PATH)
+    set(PICO_EXTRAS_PATH ${CMAKE_SOURCE_DIR}/libraries/pico-extras)
+    message(STATUS "PICO_EXTRAS_PATH = ${PICO_EXTRAS_PATH}")
+endif()
+
 include(pico_sdk_import.cmake)
+include(pico_extras_import.cmake)
 include(wiznet_pico_c_sdk_version.cmake)
 
 # Set project name
