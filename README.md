@@ -1,5 +1,7 @@
 # Getting Started with Ethernet Examples
 
+These repository is utilizing additional libraries from pico-extras.
+
 These sections will guide you through a series of steps from configuring development environment to running ethernet examples using the **WIZnet's ethernet products**.
 
 - [**Development environment configuration**](#development_environment_configuration)
