@@ -1,4 +1,4 @@
-# How to Test Loopback Example
+# How to Test Sleep_Wakeup Example
 
 
 
@@ -8,7 +8,7 @@ The following serial terminal programs are required for Loopback example test, d
 
 - [**Tera Term**][link-tera_term]
 - [**Hercules**][link-hercules]
-
+- [**WOL (magic packet)**][link-wol]
 
 
 ## Step 2: Prepare hardware
@@ -23,11 +23,11 @@ If you are using W5100S-EVB-Pico, W5500-EVB-Pico, W55RP20-EVB-Pico, W5100S-EVB-P
 
 
 
-## Step 3: Setup Loopback Example
+## Step 3: Setup Sleep_Wakeup Example
 
-To test the Loopback example, minor settings shall be done in code.
+To test the Sleep_Wakeup example, minor settings shall be done in code.
 
-1. Setup SPI port and pin in 'w5x00_spi.h' in 'WIZnet-PICO-C/port/ioLibrary_Driver/' directory.
+1. Setup SPI port and pin in 'w5x00_spi.h' in 'WIZnet-PICO-C-EXTRAS/port/ioLibrary_Driver/' directory.
 
 Setup the SPI interface you use.
 - If you use the W5100S-EVB-Pico, W5500-EVB-Pico, W5100S-EVB-Pico2 or W5500-EVB-Pico2,
@@ -43,7 +43,7 @@ Setup the SPI interface you use.
 #define PIN_RST 20
 ```
 
-If you want to test with the Loopback example using SPI DMA, uncomment USE_SPI_DMA.
+If you want to test with the Sleep_Wakeup example using SPI DMA, uncomment USE_SPI_DMA.
 
 ```cpp
 /* Use SPI DMA */
@@ -61,7 +61,7 @@ If you want to test with the Loopback example using SPI DMA, uncomment USE_SPI_D
 #define PIN_RST 25
 ```
 
-2. Setup network configuration such as IP in 'w5x00_loopback.c' which is the Loopback example in 'WIZnet-PICO-C/examples/loopback/' directory.
+2. Setup network configuration such as IP in 'w5x00_sleep_wakeup.c' which is the Loopback example in 'WIZnet-PICO-C-EXTRAS/examples/sleep_wakeup/' directory.
 
 Setup IP and other network settings to suit your network environment.
 
@@ -78,20 +78,20 @@ static wiz_NetInfo g_net_info =
 };
 ```
 
-3. Setup loopback configuration in 'w5x00_loopback.c' in 'WIZnet-PICO-C/examples/loopback/' directory.
+3. Setup udp configuration in 'w5x00_sleep_wakeup.c' in 'WIZnet-PICO-C-EXTRAS/examples/sleep_wakeup/' directory.
 
 ```cpp
 /* Port */
-#define PORT_LOOPBACK 5000
+#define PORT_WOL 9000
 ```
 
 
 
 ## Step 4: Build
 
-1. After completing the Loopback example configuration, click 'build' in the status bar at the bottom of Visual Studio Code or press the 'F7' button on the keyboard to build.
+1. After completing the Sleep_Wakeup example configuration, click 'build' in the status bar at the bottom of Visual Studio Code or press the 'F7' button on the keyboard to build.
 
-2. When the build is completed, 'w5x00_loopback.uf2' is generated in 'WIZnet-PICO-C/build/examples/loopback/' directory.
+2. When the build is completed, 'w5x00_sleep_wakeup.uf2' is generated in 'WIZnet-PICO-C-EXTRAS/build/examples/sleep_wakeup/' directory.
 
 
 
@@ -101,27 +101,30 @@ static wiz_NetInfo g_net_info =
 
 ![][link-raspberry_pi_pico_usb_mass_storage]
 
-2. Drag and drop 'w5x00_loopback.uf2' onto the USB mass storage device 'RPI-RP2'.
+2. Drag and drop 'w5x00_sleep_wakeup.uf2' onto the USB mass storage device 'RPI-RP2'.
 
 3. Connect to the serial COM port of Raspberry Pi Pico, W5100S-EVB-Pico, W5500-EVB-Pico, W55RP20-EVB-Pico, W5100S-EVB-Pico2 or W5500-EVB-Pico2 with Tera Term.
+Use USB-To-TTL module to connect serial with board.
+![image](https://github.com/user-attachments/assets/88888772-8a6f-4605-87b9-afb579da721c)
 
 ![][link-connect_to_serial_com_port]
 
 4. Reset your board.
 
-5. If the Loopback example works normally on Raspberry Pi Pico, W5100S-EVB-Pico, W5500-EVB-Pico, W55RP20-EVB-Pico, W5100S-EVB-Pico2 or W5500-EVB-Pico2, you can see the network information of Raspberry Pi Pico, W5100S-EVB-Pico, W5500-EVB-Pico, W55RP20-EVB-Pico, W5100S-EVB-Pico2 or W5500-EVB-Pico2 and the loopback server is open.
+5. If the Sleep_Wakeup example works normally on Raspberry Pi Pico, W5100S-EVB-Pico, W5500-EVB-Pico, W55RP20-EVB-Pico, W5100S-EVB-Pico2 or W5500-EVB-Pico2, you can see the network information of Raspberry Pi Pico, W5100S-EVB-Pico, W5500-EVB-Pico, W55RP20-EVB-Pico, W5100S-EVB-Pico2 or W5500-EVB-Pico2 and go to sleep mode (User LED will not blinking).
+![image](https://github.com/user-attachments/assets/866ed418-f830-4fd9-b47e-fe38d8dceb08)
 
-![][link-see_network_information_of_raspberry_pi_pico_and_open_loopback_server]
+6. Open WOL program to send WOL magic packet.
+Add Module name and MAC Address in WOL program.
+![image](https://github.com/user-attachments/assets/2aca17d1-f364-4d2d-842e-b769d5fbd1f4)
+![image](https://github.com/user-attachments/assets/227b949e-91d0-415c-9637-cdc423f7cffc)
 
-6. Connect to the open loopback server using Hercules TCP client. When connecting to the loopback server, you need to enter is the IP that was configured in Step 3, the port is 5000 by default.
+7. Click right button on mouse and Send WOL(magic packet).
+![image](https://github.com/user-attachments/assets/4e3f75ba-79f3-428e-8230-742ef88e72b0)
 
-![][link-connect_to_loopback_server_using_hercules_tcp_client_1]
+8. You can see the Raspberry Pi Pico, W5100S-EVB-Pico, W5500-EVB-Pico, W55RP20-EVB-Pico, W5100S-EVB-Pico2 or W5500-EVB-Pico2 is wake up and running (User LED will blinking).
+![image](https://github.com/user-attachments/assets/2b541db2-aba4-4c45-a350-9bc7527a7254)
 
-![][link-connect_to_loopback_server_using_hercules_tcp_client_2]
-
-7. Once connected if you send data to the loopback server, you should be able to receive back the sent message.
-
-![][link-receive_back_sent_message]
 
 
 
@@ -131,6 +134,7 @@ Link
 
 [link-tera_term]: https://osdn.net/projects/ttssh2/releases/
 [link-hercules]: https://www.hw-group.com/software/hercules-setup-utility
+[link-wol]: https://apps.microsoft.com/detail/9nblggh51pb3?hl=ko-KR&gl=KR
 [link-raspberry_pi_pico_usb_mass_storage]: https://github.com/WIZnet-ioNIC/WIZnet-PICO-C/blob/main/static/images/loopback/raspberry_pi_pico_usb_mass_storage.png
 [link-connect_to_serial_com_port]: https://github.com/WIZnet-ioNIC/WIZnet-PICO-C/blob/main/static/images/loopback/connect_to_serial_com_port.png
 [link-see_network_information_of_raspberry_pi_pico_and_open_loopback_server]: https://github.com/WIZnet-ioNIC/WIZnet-PICO-C/blob/main/static/images/loopback/see_network_information_of_raspberry_pi_pico_and_open_loopback_server.png
