@@ -4,7 +4,7 @@
 
 ## Step 1: Prepare software
 
-The following serial terminal programs are required for Loopback example test, download and install from below links.
+The following serial terminal programs are required for Sleep_Wakeup example test, download and install from below links.
 
 - [**Tera Term**][link-tera_term]
 - [**Hercules**][link-hercules]
@@ -61,7 +61,7 @@ If you want to test with the Sleep_Wakeup example using SPI DMA, uncomment USE_S
 #define PIN_RST 25
 ```
 
-2. Setup network configuration such as IP in 'w5x00_sleep_wakeup.c' which is the Loopback example in 'WIZnet-PICO-C-EXTRAS/examples/sleep_wakeup/' directory.
+2. Setup network configuration such as IP in 'w5x00_sleep_wakeup.c' which is the Sleep_Wakeup example in 'WIZnet-PICO-C-EXTRAS/examples/sleep_wakeup/' directory.
 
 Setup IP and other network settings to suit your network environment.
 
