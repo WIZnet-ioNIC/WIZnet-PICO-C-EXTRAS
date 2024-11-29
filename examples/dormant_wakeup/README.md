@@ -1,10 +1,10 @@
-# How to Test Sleep_Wakeup Example
+# How to Test Dormant_Wakeup Example
 
 
 
 ## Step 1: Prepare software
 
-The following serial terminal programs are required for Loopback example test, download and install from below links.
+The following serial terminal programs are required for Dormant_Wakeup example test, download and install from below links.
 
 - [**Tera Term**][link-tera_term]
 - [**Hercules**][link-hercules]
@@ -23,9 +23,9 @@ If you are using W5100S-EVB-Pico, W5500-EVB-Pico, W55RP20-EVB-Pico, W5100S-EVB-P
 
 
 
-## Step 3: Setup Sleep_Wakeup Example
+## Step 3: Setup Dormant_Wakeup Example
 
-To test the Sleep_Wakeup example, minor settings shall be done in code.
+To test the Dormant_Wakeup example, minor settings shall be done in code.
 
 1. Setup SPI port and pin in 'w5x00_spi.h' in 'WIZnet-PICO-C-EXTRAS/port/ioLibrary_Driver/' directory.
 
@@ -43,7 +43,7 @@ Setup the SPI interface you use.
 #define PIN_RST 20
 ```
 
-If you want to test with the Sleep_Wakeup example using SPI DMA, uncomment USE_SPI_DMA.
+If you want to test with the Dormant_Wakeup example using SPI DMA, uncomment USE_SPI_DMA.
 
 ```cpp
 /* Use SPI DMA */
@@ -61,14 +61,14 @@ If you want to test with the Sleep_Wakeup example using SPI DMA, uncomment USE_S
 #define PIN_RST 25
 ```
 
-2. Setup network configuration such as IP in 'w5x00_sleep_wakeup.c' which is the Loopback example in 'WIZnet-PICO-C-EXTRAS/examples/sleep_wakeup/' directory.
+2. Setup network configuration such as IP in 'w5x00_dormant_wakeup.c' which is the Dormant_wakeup example in 'WIZnet-PICO-C-EXTRAS/examples/dormant_wakeup/' directory.
 
 Setup IP and other network settings to suit your network environment.
 
 ```cpp
 /* Network */
 static wiz_NetInfo g_net_info =
-    {
+{
         .mac = {0x00, 0x08, 0xDC, 0x12, 0x34, 0x56}, // MAC address
         .ip = {192, 168, 11, 2},                     // IP address
         .sn = {255, 255, 255, 0},                    // Subnet Mask
@@ -78,7 +78,7 @@ static wiz_NetInfo g_net_info =
 };
 ```
 
-3. Setup udp configuration in 'w5x00_sleep_wakeup.c' in 'WIZnet-PICO-C-EXTRAS/examples/sleep_wakeup/' directory.
+3. Setup udp configuration in 'w5x00_dormant_wakeup.c' in 'WIZnet-PICO-C-EXTRAS/examples/dormant_wakeup/' directory.
 
 ```cpp
 /* Port */
@@ -89,9 +89,9 @@ static wiz_NetInfo g_net_info =
 
 ## Step 4: Build
 
-1. After completing the Sleep_Wakeup example configuration, click 'build' in the status bar at the bottom of Visual Studio Code or press the 'F7' button on the keyboard to build.
+1. After completing the Dormant_Wakeup example configuration, click 'build' in the status bar at the bottom of Visual Studio Code or press the 'F7' button on the keyboard to build.
 
-2. When the build is completed, 'w5x00_sleep_wakeup.uf2' is generated in 'WIZnet-PICO-C-EXTRAS/build/examples/sleep_wakeup/' directory.
+2. When the build is completed, 'w5x00_dormant_wakeup.uf2' is generated in 'WIZnet-PICO-C-EXTRAS/build/examples/dormant_wakeup/' directory.
 
 
 
@@ -101,7 +101,7 @@ static wiz_NetInfo g_net_info =
 
 ![][link-raspberry_pi_pico_usb_mass_storage]
 
-2. Drag and drop 'w5x00_sleep_wakeup.uf2' onto the USB mass storage device 'RPI-RP2'.
+2. Drag and drop 'w5x00_dormant_wakeup.uf2' onto the USB mass storage device 'RPI-RP2'.
 
 3. Connect to the serial COM port of Raspberry Pi Pico, W5100S-EVB-Pico, W5500-EVB-Pico, W55RP20-EVB-Pico, W5100S-EVB-Pico2 or W5500-EVB-Pico2 with Tera Term.
 Use USB-To-TTL module to connect serial with board.
@@ -111,8 +111,9 @@ Use USB-To-TTL module to connect serial with board.
 
 4. Reset your board.
 
-5. If the Sleep_Wakeup example works normally on Raspberry Pi Pico, W5100S-EVB-Pico, W5500-EVB-Pico, W55RP20-EVB-Pico, W5100S-EVB-Pico2 or W5500-EVB-Pico2, you can see the network information of Raspberry Pi Pico, W5100S-EVB-Pico, W5500-EVB-Pico, W55RP20-EVB-Pico, W5100S-EVB-Pico2 or W5500-EVB-Pico2 and go to sleep mode (User LED will not blinking).
-![image](https://github.com/user-attachments/assets/866ed418-f830-4fd9-b47e-fe38d8dceb08)
+5. If the Dormant_Wakeup example works normally on Raspberry Pi Pico, W5100S-EVB-Pico, W5500-EVB-Pico, W55RP20-EVB-Pico, W5100S-EVB-Pico2 or W5500-EVB-Pico2, you can see the network information of Raspberry Pi Pico, W5100S-EVB-Pico, W5500-EVB-Pico, W55RP20-EVB-Pico, W5100S-EVB-Pico2 or W5500-EVB-Pico2 and go to dormant mode (User LED will not blinking).
+![image](https://github.com/user-attachments/assets/b66ef8a3-1195-4e50-821a-ff6d2b7cab51)
+
 
 6. Open WOL program to send WOL magic packet.
 Add Module name and MAC Address in WOL program.
@@ -123,7 +124,8 @@ Add Module name and MAC Address in WOL program.
 ![image](https://github.com/user-attachments/assets/4e3f75ba-79f3-428e-8230-742ef88e72b0)
 
 8. You can see the Raspberry Pi Pico, W5100S-EVB-Pico, W5500-EVB-Pico, W55RP20-EVB-Pico, W5100S-EVB-Pico2 or W5500-EVB-Pico2 is wake up and running (User LED will blinking).
-![image](https://github.com/user-attachments/assets/2b541db2-aba4-4c45-a350-9bc7527a7254)
+![image](https://github.com/user-attachments/assets/9d41ae50-970b-4a08-b0e1-d93752cb0dd6)
+
 
 
 
