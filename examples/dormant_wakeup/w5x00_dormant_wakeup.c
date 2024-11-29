@@ -42,6 +42,7 @@
  * Variables
  * ----------------------------------------------------------------------------------------------------
  */
+//wiz_PhyConf phy_conf;
 /* Network */
 static wiz_NetInfo g_net_info =
     {
@@ -61,9 +62,6 @@ static wiz_NetInfo g_net_info =
  */
 /* Clock */
 static void set_clock_khz(void);
-
-void gpio_callback(uint gpio, uint32_t events);
-void sleep_goto_sleep_until_gpio(uint gpio_pin, bool edge);
 
 /**
  * ----------------------------------------------------------------------------------------------------
@@ -107,19 +105,20 @@ int main()
 
     sleep_run_from_xosc();
 
-    printf("Going to sleep until receive WOL Magic packet...\n");
+    printf("Going to dormant until receive WOL Magic packet...\n");
     uart_default_tx_wait_blocking();
 
-    sleep_goto_sleep_until_gpio(PIN_IRQ, false);
+    sleep_goto_dormant_until_pin(PIN_IRQ, true, false);
 
     sleep_power_up();
 
     printf("Wake up!\n");
     uart_default_tx_wait_blocking();
 
-    while(1){
+    while(1)
+    {
         gpio_xor_mask(1<<LED_PIN);
-        sleep_ms(500);
+        sleep_ms(500); 
     }
 }
 
@@ -144,23 +143,3 @@ static void set_clock_khz(void)
     );
 }
 
-void gpio_callback(uint gpio, uint32_t events) {
-    return;
-}
-
-void sleep_goto_sleep_until_gpio(uint gpio_pin, bool edge) {
-    gpio_init(gpio_pin);
-    gpio_set_dir(gpio_pin, GPIO_IN);  
-
-    gpio_set_irq_enabled_with_callback(
-        gpio_pin,
-        edge ? GPIO_IRQ_EDGE_RISE : GPIO_IRQ_EDGE_FALL,
-        true,
-        &gpio_callback
-    );
-
-    uint32_t save = scb_hw->scr;
-    scb_hw->scr = save | M0PLUS_SCR_SLEEPDEEP_BITS;
-
-    __wfi();  
-}
