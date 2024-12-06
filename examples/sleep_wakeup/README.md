@@ -105,27 +105,36 @@ static wiz_NetInfo g_net_info =
 
 3. Connect to the serial COM port of Raspberry Pi Pico, W5100S-EVB-Pico, W5500-EVB-Pico, W55RP20-EVB-Pico, W5100S-EVB-Pico2 or W5500-EVB-Pico2 with Tera Term.
 Use USB-To-TTL module to connect serial with board.
-![image](https://github.com/user-attachments/assets/88888772-8a6f-4605-87b9-afb579da721c)
+
+![][link-uart_serial_pin_out]
 
 ![][link-connect_to_serial_com_port]
 
 4. Reset your board.
 
 5. If the Sleep_Wakeup example works normally on Raspberry Pi Pico, W5100S-EVB-Pico, W5500-EVB-Pico, W55RP20-EVB-Pico, W5100S-EVB-Pico2 or W5500-EVB-Pico2, you can see the network information of Raspberry Pi Pico, W5100S-EVB-Pico, W5500-EVB-Pico, W55RP20-EVB-Pico, W5100S-EVB-Pico2 or W5500-EVB-Pico2 and go to sleep mode (User LED will not blinking).
-![image](https://github.com/user-attachments/assets/866ed418-f830-4fd9-b47e-fe38d8dceb08)
+
+![][link-see_network_information_of_raspberry_pi_pico_and_enter_sleep_mode]
+
 
 6. Open WOL program to send WOL magic packet.
 Add Module name and MAC Address in WOL program.
-![image](https://github.com/user-attachments/assets/2aca17d1-f364-4d2d-842e-b769d5fbd1f4)
-![image](https://github.com/user-attachments/assets/227b949e-91d0-415c-9637-cdc423f7cffc)
+
+![][link-open_wol_program]
+
+![][link-open_wol_program_and_add_module_information]
+
 
 7. Click right button on mouse and Send WOL(magic packet).
-![image](https://github.com/user-attachments/assets/4e3f75ba-79f3-428e-8230-742ef88e72b0)
+
+![][link-send_wol_magic_packet]
 
 8. You can see the Raspberry Pi Pico, W5100S-EVB-Pico, W5500-EVB-Pico, W55RP20-EVB-Pico, W5100S-EVB-Pico2 or W5500-EVB-Pico2 is wake up and running (User LED will blinking).
-![image](https://github.com/user-attachments/assets/26f0184d-385b-4748-8c12-e61cb7d72bf3)
 
+![][link-see_wakeup_of_raspberry_pi_pico]
 
+&nbsp;&nbsp;For example, if you were using the W55RP20-EVB-Pico, the LEDs would blink as shown in the image below.
+![][link-see_user_led_of_raspberry_pi_pico]
 
 
 
@@ -136,9 +145,12 @@ Link
 [link-tera_term]: https://osdn.net/projects/ttssh2/releases/
 [link-hercules]: https://www.hw-group.com/software/hercules-setup-utility
 [link-wol]: https://apps.microsoft.com/detail/9nblggh51pb3?hl=ko-KR&gl=KR
-[link-raspberry_pi_pico_usb_mass_storage]: https://github.com/WIZnet-ioNIC/WIZnet-PICO-C/blob/main/static/images/loopback/raspberry_pi_pico_usb_mass_storage.png
-[link-connect_to_serial_com_port]: https://github.com/WIZnet-ioNIC/WIZnet-PICO-C/blob/main/static/images/loopback/connect_to_serial_com_port.png
-[link-see_network_information_of_raspberry_pi_pico_and_open_loopback_server]: https://github.com/WIZnet-ioNIC/WIZnet-PICO-C/blob/main/static/images/loopback/see_network_information_of_raspberry_pi_pico_and_open_loopback_server.png
-[link-connect_to_loopback_server_using_hercules_tcp_client_1]: https://github.com/WIZnet-ioNIC/WIZnet-PICO-C/blob/main/static/images/loopback/connect_to_loopback_server_using_hercules_tcp_client_1.png
-[link-connect_to_loopback_server_using_hercules_tcp_client_2]: https://github.com/WIZnet-ioNIC/WIZnet-PICO-C/blob/main/static/images/loopback/connect_to_loopback_server_using_hercules_tcp_client_2.png
-[link-receive_back_sent_message]: https://github.com/WIZnet-ioNIC/WIZnet-PICO-C/blob/main/static/images/loopback/receive_back_sent_message.png
+[link-raspberry_pi_pico_usb_mass_storage]: https://github.com/WIZnet-ioNIC/WIZnet-PICO-C-EXTRAS/blob/main/static/images/sleep_wakeup/raspberry_pi_pico_usb_mass_storage.png
+[link-uart_serial_pin_out]: https://github.com/WIZnet-ioNIC/WIZnet-PICO-C-EXTRAS/blob/main/static/images/sleep_wakeup/uart_serial_pin_out_of_raspberry_pi_pico.png
+[link-connect_to_serial_com_port]: https://github.com/WIZnet-ioNIC/WIZnet-PICO-C-EXTRAS/blob/main/static/images/sleep_wakeup/connect_to_serial_com_port.png
+[link-see_network_information_of_raspberry_pi_pico_and_enter_sleep_mode]: https://github.com/WIZnet-ioNIC/WIZnet-PICO-C-EXTRAS/blob/main/static/images/sleep_wakeup/see_network_information_of_raspberry_pi_pico_and_enter_sleep_mode.png
+[link-open_wol_program]: https://github.com/WIZnet-ioNIC/WIZnet-PICO-C-EXTRAS/blob/main/static/images/sleep_wakeup/open_wol_program.png
+[link-open_wol_program_and_add_module_information]: https://github.com/WIZnet-ioNIC/WIZnet-PICO-C-EXTRAS/blob/main/static/images/sleep_wakeup/open_wol_program_and_add_module_information.png
+[link-send_wol_magic_packet]: https://github.com/WIZnet-ioNIC/WIZnet-PICO-C-EXTRAS/blob/main/static/images/sleep_wakeup/send_wol_magic_packet.png
+[link-see_wakeup_of_raspberry_pi_pico]: https://github.com/WIZnet-ioNIC/WIZnet-PICO-C-EXTRAS/blob/main/static/images/sleep_wakeup/see_wakeup_of_raspberry_pi_pico.png
+[link-see_user_led_of_raspberry_pi_pico]: https://github.com/WIZnet-ioNIC/WIZnet-PICO-C-EXTRAS/blob/main/static/images/sleep_wakeup/see_user_led_of_raspberry_pi_pico.png
